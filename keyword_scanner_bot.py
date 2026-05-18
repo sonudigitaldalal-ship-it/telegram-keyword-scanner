@@ -5,9 +5,10 @@ from telethon.tl.functions.messages import SearchRequest
 from telethon.tl.types import InputMessagesFilterEmpty
 import os
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
 API_ID = int(os.getenv("API_ID", "0"))
 API_HASH = os.getenv("API_HASH")
+PHONE_NUMBER = os.getenv("PHONE_NUMBER")
+PASSWORD = os.getenv("PASSWORD")
 MAX_RESULTS = 5
 
 PLAN_A_CHANNELS = [
@@ -113,7 +114,7 @@ def make_bot(client):
 
 async def main():
     client = TelegramClient("keyword_scanner_bot", API_ID, API_HASH)
-    await client.start(bot_token=BOT_TOKEN)
+    await client.start(phone=PHONE_NUMBER, password=PASSWORD)
     make_bot(client)
     me = await client.get_me()
     logger.info("✅ Bot running as @%s", me.username)
