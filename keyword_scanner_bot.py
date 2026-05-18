@@ -9,6 +9,7 @@ API_ID = int(os.getenv("API_ID", "0"))
 API_HASH = os.getenv("API_HASH")
 PHONE_NUMBER = os.getenv("PHONE_NUMBER")
 PASSWORD = os.getenv("PASSWORD")
+OTP = os.getenv("OTP", "")
 MAX_RESULTS = 5
 
 PLAN_A_CHANNELS = [
@@ -113,12 +114,15 @@ def make_bot(client):
         await handle_search(event, "c")
 
 async def main():
+    def otp_callback():
+        if OTP:
+            logger.info("✅ Using OTP from environment variable")
+            return OTP
+        logger.error("❌ OTP not provided in environment variable")
+        raise ValueError("OTP required but not set in OTP environment variable")
+    
     client = TelegramClient("keyword_scanner_bot", API_ID, API_HASH)
-    await client.start(phone=PHONE_NUMBER, password=PASSWORD)
-    make_bot(client)
-    me = await client.get_me()
-    logger.info("✅ Bot running as @%s", me.username)
-    await client.run_until_disconnected()
+    await client.start(phone=PHONE_NUMBER, password=PASSWORD, code_callback=otp_callback)
     make_bot(client)
     me = await client.get_me()
     logger.info("✅ Bot running as @%s", me.username)
