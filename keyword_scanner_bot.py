@@ -114,7 +114,7 @@ def make_bot(client):
 
 async def main():
     client = TelegramClient("keyword_scanner_bot", API_ID, API_HASH)
-    await client.start(phone=PHONE_NUMBER, password=PASSWORD)
+    await client.start()
     make_bot(client)
     me = await client.get_me()
     logger.info("✅ Bot running as @%s", me.username)
