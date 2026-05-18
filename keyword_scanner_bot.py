@@ -122,7 +122,15 @@ async def main():
         raise ValueError("OTP required but not set in OTP environment variable")
     
     client = TelegramClient("keyword_scanner_bot", API_ID, API_HASH)
-    await client.start(phone=PHONE_NUMBER, password=PASSWORD, code_callback=otp_callback)
+    
+    # Check if already authenticated
+    if not await client.is_user_authorized():
+        logger.info("🔐 First time auth - need OTP")
+        await client.start(phone=PHONE_NUMBER, password=PASSWORD, code_callback=otp_callback)
+    else:
+        logger.info("✅ Already authenticated - using saved session")
+        await client.connect()
+    
     make_bot(client)
     me = await client.get_me()
     logger.info("✅ Bot running as @%s", me.username)
